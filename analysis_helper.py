@@ -50,9 +50,11 @@ def get_results_from_url(url: str):
 
 def save_file():
     file_path = filedialog.asksaveasfilename(defaultextension=".md", filetypes=[("markdown files", "*.md"), ("Text files", "*.txt")])
-    leg_data_list = get_results_from_url(url=url_box.get())
+    race_url=url_box.get()
+    leg_data_list = get_results_from_url(url=race_url)
     if file_path:
         with open(file_path, "w", encoding="UTF-8") as f:
+            f.write(f"> **レース URL**：[{race_url}]({race_url})\n\n")
             f.write("# レース名 - コース\n")
             f.write("## レース結果\n")
             f.write("+ 総合タイム:\n+ 順位:\n+ 巡航速度:\n+ ミス率:\n")
