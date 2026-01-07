@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Analysis Helper",
+  "version": "0.2.0",
+  "description": "LapCenterの記録ページからアナリシス用Markdownテンプレートを生成します。",
+  "action": {
+    "default_title": "Analysis Helper",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["activeTab", "downloads", "scripting"],
+  "host_permissions": ["https://mulka2.com/lapcenter/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://mulka2.com/lapcenter/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon_16.png",
+    "48": "icons/icon_48.png",
+    "128": "icons/icon_128.png"
+  }
+}

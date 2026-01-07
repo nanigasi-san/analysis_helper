@@ -1,0 +1,37 @@
+function isInteger(aValue) {
+	if (aValue == null || aValue == undefined || aValue == "") {
+		return false;
+	} else {
+		return aValue.match(/[0-9]+/);
+	}
+}
+
+function parseTimeToInt(aValue) {
+	var length = aValue.length;
+	var ret = 0;
+	if (aValue == "") {
+		ret = 0;
+	} else if (length <= 2) {
+		ret = parseInt(aValue);
+	} else if (length <= 5) {
+		ret = parseInt(aValue.substring(0, length - 3)) * 60
+				+ parseInt(aValue.substring(length - 2));
+	} else {
+		ret = parseInt(aValue.substring(0, length - 6)) * 3600
+				+ parseInt(aValue.substring(length - 5, length - 3)) * 60;
+				+ parseInt(aValue.substring(length - 2));
+	}
+	return ret;
+}
+
+function formatIntToTime(aValue) {
+	var i = aValue;
+	var second = i % 60;
+	i = (i - second) / 60;
+	var minute = i % 60;
+	var hour = (i - minute) / 60;
+	return String(hour) + ":" 
+			+ (minute < 10 ? ("0" + String(minute)) : String(minute)) + ":"
+			+ (second < 10 ? ("0" + String(second)) : String(second));
+}
+

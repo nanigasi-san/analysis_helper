@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://mulka2.com/lapcenter/lapcombat2/runner.jsp?event=9469&file=1&runner=275 -->
+<html lang="ja"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="オリエンテーリング大会のリザルト・ラップ解析データを集めた情報サイトです。">
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<link href="https://mulka2.com/framework/mulka2.ico" type="image/vnd.microsoft.icon" rel="icon">
+<script src="./sample_page_files/jquery-2.2.3.min.js.ダウンロード" type="text/javascript"></script>
+<link href="./sample_page_files/bootstrap.min.css" type="text/css" rel="stylesheet">
+<script src="./sample_page_files/bootstrap.min.js.ダウンロード" type="text/javascript"></script>
+<link href="./sample_page_files/lapcenter-common.css" type="text/css" rel="stylesheet">
+<link href="./sample_page_files/matoba-common.css" type="text/css" rel="stylesheet">
+<script src="./sample_page_files/matoba-common.js.ダウンロード" type="text/javascript"></script>
+<script src="./sample_page_files/runner.js.ダウンロード" type="text/javascript"></script>
+<link href="./sample_page_files/runner.css" type="text/css" rel="stylesheet">
+<title>山田 海音</title>
+</head>
+<body>
+
+	<script>
+		var eventNumber = "9469";
+		var fileIndex = "1";
+		var runnerId = "275";
+		var classId = "4";
+		var analysysType = "class";
+
+		var summaryMemoLegIndex = 9999;
+		var memoListKeyList = [];
+		for (var i = 0; i < 11; i++) {
+			memoListKeyList.push(i);
+		}
+		memoListKeyList.push(summaryMemoLegIndex);
+		var myUserCode = "";
+		var myUserName = "";
+
+		var myMemoList = {};
+		var otherMemoList = {};
+		var privateMemoExists = false;
+		var defaultOtherMemoUserCode = "";
+		var useLimitKey = false;
+
+		
+
+		function getMemoShareJsonDataParam () {
+			var ret = { "json" : "privateMemoShare"
+					, "event" : eventNumber
+					, "file" : fileIndex
+					, "runner" : runnerId
+					
+					, "useLimitKey" : ($('#chkUseLimitKey').prop('checked') ? "true" : "false")
+			};
+			return ret;
+		}
+
+		function getPrivateLinkJsonDataParam () {
+			var ret = { "json" : "privateLink"
+					, "event" : eventNumber
+					, "file" : fileIndex
+					, "runner" : runnerId
+					
+					, "title" : $('#txtPrivateLinkTitle').val()
+					, "url" : $('#txtPrivateLinkUrl').val() 
+			};
+			return ret;
+		}
+	</script>
+	<div class="container-fluid" style="margin-top: 16px;">
+
+		<div class="row">
+			<span style="margin-left: 10px;">
+			<a href="https://mulka2.com/lapcenter/index.jsp"><img src="./sample_page_files/lapcenter2_header.png" width="150" height="40"></a>
+
+			<div class="btn-group">
+				<button type="button" class="btn btn-default dropdown-toggle inline-hide-in-memo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					戻る <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<li><a href="https://mulka2.com/lapcenter/lapcombat2/result-list.jsp?event=9469&amp;file=1&amp;class=4">記録一覧</a></li>
+					<li><a href="https://mulka2.com/lapcenter/lapcombat2/split-list.jsp?event=9469&amp;file=1&amp;class=4">ラップ解析</a></li>
+				</ul>
+			</div>
+
+			
+			
+			</span><br>
+		</div>
+
+		
+		
+			<br>
+		
+
+		<form id="frmType" class="form-horizontal" method="GET" action="https://mulka2.com/lapcenter/lapcombat2/runner.jsp">
+			<input type="hidden" name="event" value="9469">
+			<input type="hidden" name="file" value="1">
+			<input type="hidden" name="runner" value="275">
+			<div class="row block-hide-in-memo block-hide-in-other-memo" id="divSelectType">
+				<div class="col-sm-6 col-md-5 col-lg-4">
+					<select id="selType" name="type" class="form-control" style="width: auto; display: inline-block;">
+<option value="class" selected="">MUL3クラスだけで解析</option>
+<option value="course">同じコースの人を一緒に解析</option>
+<option value="all">同じレッグを走った人を一緒に解析</option>
+</select>
+
+				</div>
+			</div>
+		</form>
+		<script>
+			$("#selType").change( function () {
+				$('#frmType').submit();
+			});
+		</script>
+		<br>
+
+		
+			
+				
+				<div class="alert alert-info" role="alert">↑で選択すると、同じコース・レッグの人と一緒に解析できます。</div>
+			
+			
+		
+		<div class="row">
+			<div class="col-xs-12">
+			
+				<div id="divTableFrame">
+					<table id="tblList">
+						<thead>
+							<tr class="meta">
+								<td style="vertical-align: middle;">
+									&nbsp;
+								</td>
+								<td style="vertical-align: middle;">
+									上位平均
+								</td>
+								<td>
+									<select id="selRunner" name="runner" class="form-control" style="width: 130px;">
+<option value="263">美濃部 遼</option>
+<option value="264">今 勇翔</option>
+<option value="265">新目 裕亮</option>
+<option value="266">池田 寛大</option>
+<option value="267">町田 涼介</option>
+<option value="268">角谷 拓海</option>
+<option value="269">栗原 拓未</option>
+<option value="270">荻野 友希</option>
+<option value="271">熊谷 周</option>
+<option value="272">長谷川 敬祐</option>
+<option value="273">福田 泰士</option>
+<option value="274">川出 晃大</option>
+<option value="275" selected="">山田 海音</option>
+<option value="276">吉田 晃平</option>
+<option value="277">長山 瑛音</option>
+<option value="278">高田 敦貴</option>
+<option value="279">野田 晃司</option>
+<option value="280">丸山 拓士</option>
+<option value="281">増渕 友汰</option>
+<option value="282">原島 裕一</option>
+<option value="283">島倉 大門</option>
+<option value="284">小島 宗慈</option>
+<option value="285">澁谷 知貴</option>
+<option value="286">田中 颯太朗</option>
+<option value="287">杉本 成央</option>
+<option value="288">宮脇 柊哉</option>
+<option value="289">川原 慧也</option>
+<option value="290">田井 俊平</option>
+<option value="291">磯貝 遥希</option>
+<option value="292">林 紘希</option>
+<option value="293">北山 桂月</option>
+<option value="294">丹波 侑来</option>
+<option value="295">杉浦 将磨</option>
+<option value="296">中村 匠馬</option>
+<option value="297">平野 琉一</option>
+<option value="298">宝来 悠生</option>
+<option value="299">菅田 雄大</option>
+<option value="300">手塚 琥音</option>
+<option value="301">白戸 俊裕</option>
+<option value="302">佐々木 渉真</option>
+<option value="303">日比野 兼伸</option>
+<option value="304">野村 光佑</option>
+<option value="305">小杉 亮太</option>
+<option value="306">鈴木 敬太</option>
+<option value="307">酒井 敬吾</option>
+<option value="308">櫻井 孝樹</option>
+<option value="309">山邉 晴登</option>
+<option value="310">柳澤 篤</option>
+<option value="311">山本 裕典</option>
+<option value="312">山野内 拓海</option>
+<option value="313">滝沢 和樹</option>
+<option value="314">木戸 友仁</option>
+<option value="315">田岡 諒也</option>
+<option value="316">古谷 友基</option>
+<option value="317">石橋 一真</option>
+<option value="318">朝岡 俊亮</option>
+<option value="319">蔵田 育</option>
+<option value="320">磯野 匠</option>
+<option value="321">清水 康介</option>
+<option value="322">大石 晃大</option>
+<option value="323">仲野 太陽</option>
+<option value="324">廣田 時雅</option>
+<option value="325">木村 康陽</option>
+<option value="326">鈴木 健太</option>
+<option value="327">岩崎 海大</option>
+<option value="328">岩佐 佳祐</option>
+<option value="329">山下 大輝ラファエル</option>
+<option value="330">平松 直也</option>
+<option value="331">中井 湊</option>
+<option value="332">小川 裕太</option>
+<option value="333">津田 幹太</option>
+<option value="334">柿本 源心</option>
+<option value="335">門野 大地</option>
+<option value="336">辻田 航</option>
+<option value="337">安原 佳祐</option>
+<option value="338">塩田 大成</option>
+<option value="339">碓井 一成</option>
+<option value="340">梅宮 知広</option>
+<option value="341">竹村 宥吾</option>
+<option value="342">岩井 悠太</option>
+<option value="343">山口 俊輔</option>
+<option value="344">木村 直央</option>
+<option value="345">上川名 琉人</option>
+</select>
+
+								</td>
+								<td>
+									<button type="button" class="btn btn-primary" id="btnPlus">
+										<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+									</button>
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=0" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">S→1</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												3:46
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">4:41</div><div class="split-cell-laprank">11</div><div class="split-cell-speed">124</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:04:41</div><div class="split-cell-elapsedrank">11</div><div class="split-cell-loss">   0:09</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo0" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo0" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-0" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-0" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment0" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment0" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=1" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">1→2</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												1:45
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">2:26</div><div class="split-cell-laprank">28</div><div class="split-cell-speed">139</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:07:07</div><div class="split-cell-elapsedrank">14</div><div class="split-cell-loss">   0:20</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo1" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo1" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-1" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-1" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment1" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment1" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=2" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">2→3</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												3:30
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">6:15</div><div class="split-cell-laprank">52</div><div class="split-cell-speed">178</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:13:22</div><div class="split-cell-elapsedrank">29</div><div class="split-cell-loss">   2:02</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo2" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo2" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-2" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-2" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment2" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment2" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=3" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">3→4</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												3:18
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">4:43</div><div class="split-cell-laprank">41</div><div class="split-cell-speed">143</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:18:05</div><div class="split-cell-elapsedrank">30</div><div class="split-cell-loss">   0:45</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo3" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo3" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-3" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-3" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment3" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment3" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=4" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">4→5</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												7:26
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">8:40</div><div class="split-cell-laprank">9</div><div class="split-cell-speed">116</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:26:45</div><div class="split-cell-elapsedrank">17</div><div class="split-cell-loss">  -0:16</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo4" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo4" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-4" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-4" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment4" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment4" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=5" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">5→6</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												3:37
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">4:27</div><div class="split-cell-laprank">15</div><div class="split-cell-speed">123</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:31:12</div><div class="split-cell-elapsedrank">16</div><div class="split-cell-loss">   0:06</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo5" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo5" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-5" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-5" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment5" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment5" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=6" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">6→7</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												3:42
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">4:27</div><div class="split-cell-laprank">12</div><div class="split-cell-speed">120</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:35:39</div><div class="split-cell-elapsedrank">14</div><div class="split-cell-loss">   0:00</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo6" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo6" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-6" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-6" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment6" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment6" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=7" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">7→8</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												5:30
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">6:54</div><div class="split-cell-laprank">14</div><div class="split-cell-speed">125</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:42:33</div><div class="split-cell-elapsedrank">14</div><div class="split-cell-loss">   0:17</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo7" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo7" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-7" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-7" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment7" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment7" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=8" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">8→9</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												3:10
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">4:19</div><div class="split-cell-laprank">20</div><div class="split-cell-speed">136</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:46:52</div><div class="split-cell-elapsedrank">13</div><div class="split-cell-loss">   0:31</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo8" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo8" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-8" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-8" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment8" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment8" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=9" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">9→10</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												0:33
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">0:42</div><div class="split-cell-laprank">12</div><div class="split-cell-speed">127</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:47:34</div><div class="split-cell-elapsedrank">13</div><div class="split-cell-loss">   0:02</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo9" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo9" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-9" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-9" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment9" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment9" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-memo-margin" style="display: none;">
+									<td colspan="4" style="border: none;">
+										<div style="height: 8px;"></div>
+									</td>
+								</tr>
+							
+								<tr class="row-leg-body">
+									<td style="vertical-align: middle; text-align: center; background-color: #eee;">
+										<a href="https://mulka2.com/lapcenter/lapcombat2/leg.jsp?event=9469&amp;file=1&amp;runner=275&amp;type=class&amp;leg=10" class="btn btn-primary btn-leg-name" role="button" style="width: 70px;">10→F</a>
+									</td>
+									<td style="vertical-align: top;">
+										<div class="split-row-1">
+											<div class="split-cell-laptime">
+												0:53
+											</div>
+										</div>
+										<div class="split-row-2">
+											<div class="split-cell-elapsedtime">&nbsp;</div>
+										</div>
+									</td>
+									<td><div class="split-row-1"><div class="split-cell-laptime">1:06</div><div class="split-cell-laprank">32</div><div class="split-cell-speed">123</div></div><div class="split-row-2"><div class="split-cell-elapsedtime">0:48:40</div><div class="split-cell-elapsedrank">13</div><div class="split-cell-loss">   0:02</div></div></td>
+									<td>
+										&nbsp;
+									</td>
+								</tr>
+								<tr class="row-leg-memo" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtMemo10" class="form-control text-leg-memo" rows="3" readonly="true"></textarea>
+									</td>
+									<td>
+										<button id="btnMemo10" type="button" class="btn btn-link btn-leg-memo" style="visibility:hidden">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-10" style="display: none;">
+									<td colspan="3" style="padding: 2px 4px 2px 4px;" class="cell-comment">
+										<div class="div-comment">
+											<span style="font-weight: bold;"></span><br><span class="comment-body"></span>
+										</div>
+									</td>
+									<td>
+										<button type="button" class="btn btn-link btn-leg-edit-comment" style="visibility:hidden">
+											<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+								<tr class="row-leg-comment row-leg-comment-10" style="display: none;">
+									<td colspan="3">
+										<textarea id="txtComment10" placeholder="コメントする" class="form-control text-leg-comment" rows="2"></textarea>
+									</td>
+									<td>
+										<button id="btnComment10" type="button" class="btn btn-link btn-leg-add-comment">
+											<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+										</button>
+									</td>
+								</tr>
+							
+
+							<tr class="row-leg-memo-margin" style="display: none;">
+								<td colspan="4" style="border: none;">
+									<div style="height: 8px;"></div>
+								</td>
+							</tr>
+
+							<tr class="meta">
+								<td style="vertical-align: top; text-align: center;" colspan="2">
+									<b>氏名</b>
+								</td>
+								<td style="text-align: center;">山田 海音</td>
+								<td>
+									&nbsp;
+								</td>
+							</tr>
+							<tr class="meta">
+								<td style="vertical-align: top; text-align: center;" colspan="2">
+									<b>記録</b>
+								</td>
+								<td style="text-align: center;">0:48:40</td>
+								<td>
+									&nbsp;
+								</td>
+							</tr>
+							<tr class="meta">
+								<td style="vertical-align: top; text-align: center;" colspan="2">
+									<b>巡航速度</b>
+								</td>
+								<td style="text-align: center;">120</td>
+								<td>
+									&nbsp;
+								</td>
+							</tr>
+							<tr class="meta">
+								<td style="vertical-align: top; text-align: center;" colspan="2">
+									<b>ミス率</b>
+								</td>
+								<td style="text-align: center;">9%</td>
+								<td>
+									&nbsp;
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		</div>
+		<br>
+
+		
+
+		Special Thanks to Mr.Sakurai and Mr.Hatori. 
+	</div>
+
+
+</body></html>

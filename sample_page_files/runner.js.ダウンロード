@@ -1,0 +1,973 @@
+$(document).ready( function() {
+
+	// ---------------------
+	// ブックマークボタン
+	// ---------------------
+	$("#btnBookmark").click( function () {
+		var btnElement = $("#btnBookmark");
+		var bookmarkValue;
+		if (btnElement.hasClass("btn-default")) {
+			bookmarkValue = true;
+		}
+		else {
+			bookmarkValue = false;
+		}
+
+		btnElement.prop("disabled", true);
+		$.ajax({
+			url: "runner.jsp",
+			data: { "json" : "bookmark"
+					, "event" : eventNumber
+					, "file" : fileIndex
+					, "runner" : runnerId
+					, "value" : bookmarkValue },
+			type: "POST",
+			dataType: "json"
+		}).done( function ( aData, aTextStatus, aJqXHR ) {
+			var btnElement = $("#btnBookmark");
+			if (aData != null && aData.returnExists == "true") {
+				if (aData.returnValue.done == true) {
+					var messageElement = $("#divOperationMessage");
+					// ブックマークON
+					if (aData.returnValue.value == true) {
+						btnElement.addClass("btn-primary").removeClass("btn-default");
+						messageElement.text("ブックマークしました。マイページに表示されます。");
+					}
+					// ブックマークOFF
+					else {
+						btnElement.addClass("btn-default").removeClass("btn-primary");
+						messageElement.text("ブックマークを解除しました。");
+					}
+					messageElement.css("display", "block");
+				}
+			}
+			btnElement.prop("disabled", false);
+		}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+			$('#btnBookmark').prop("disabled", false);
+		});
+
+	});
+
+	// ---------------------
+	// メモ表示ボタン
+	// ---------------------
+	$("#btnShowMemo").click( function () {
+		var btnElement = $("#btnShowMemo");
+		// 表示ON
+		if (btnElement.hasClass("btn-default")) { 
+			showMyMemoView();
+		}
+		// 表示OFF
+		else {
+			hideMyMemoView();
+		}
+		$('#divOperationMessage').css('display', 'none');
+	});
+
+	// ---------------------
+	// メモ入力ボタン
+	// ---------------------
+	$("#btnEditMemo").click( function () {
+		var btnElement = $("#btnEditMemo");
+		// 編集ON
+		if (btnElement.hasClass("btn-default")) {
+			// 自分のメモの表示中であればオフにする
+			if ($("#btnShowMemo").hasClass("btn-primary")) { 
+				hideMyMemoView();
+			}
+		
+			btnElement.addClass("btn-primary").removeClass("btn-default");
+			$('.row-leg-memo').css('display', 'table-row'); 	// メモ表示行
+			$('.row-leg-memo-margin').css('display', 'table-row'); 	// メモ表示行
+			$('.block-show-memo-view').css('display', 'block');	// メモ表示中に表示する部分
+			$('#divShareSetting').css('display', 'block');		// 公開範囲
+			$('.btn-leg-memo').css('visibility', 'visible');	// メモ登録用ボタンはメモ入力・表示中のみ表示
+			$('.inline-hide-in-memo').css('display', 'none');	// メモ入力中に非表示にするinlineレベル群
+			$('.inline-show-in-memo').css('display', 'inline-block');	// メモ入力中に表示するinlineレベル群
+			$('.block-hide-in-memo').css('display', 'none');	// メモ入力中に非表示にするblockレベル群
+			$('.block-show-in-memo').css('display', 'block');	// メモ入力中に表示するblockレベル群
+			$('.btn-leg-name').addClass('disabled');			// レッグボタンは無効に
+			$('#divOperationMessage').css('display', 'none');	// ブックマーク操作後のメッセージは非表示にする
+			$('.row-leg-comment').css('display', 'none');		// コメント行も非表示
+
+			for (var i = 0; i < memoListKeyList.length; i++) {
+				var memoListKey = memoListKeyList[i];
+				// レッグメモ保存ボタンをチェックマークにする
+				var spanLegMemoSaveElement = $("#btnMemo" + String(memoListKey) + " span");
+				if (spanLegMemoSaveElement.hasClass("glyphicon-comment")) { 
+					spanLegMemoSaveElement.addClass("glyphicon-ok").removeClass("glyphicon-comment");
+				}
+
+				// メモをセットする
+				var memoItem = myMemoList[memoListKey];
+				var txtMemoElement = $("#txtMemo" + String(memoListKey));
+				if (memoItem.memoExists) {
+					txtMemoElement.val(memoItem.memo);
+				} else {
+					txtMemoElement.val("");
+				}
+				txtMemoElement.attr('readonly', false);
+			}
+
+			var btnShowElement = $("#btnShowMemo");
+			if (btnShowElement.hasClass("btn-primary")) { 
+				btnShowElement.addClass("btn-default").removeClass("btn-primary");
+			}
+		}
+		// 編集OFF
+		else {
+			hideMyMemoEdit();
+		}
+	});
+
+	// ---------------------
+	// 公開設定登録ボタン
+	// ---------------------
+	$('#btnShareSetting').click( function() {
+		$('#chkUseLimitKey').prop('checked', useLimitKey);
+		$('#divModalShare').modal();
+	});
+
+	// ---------------------
+	// 公開設定登録OK
+	// ---------------------
+	$('#btnModalShareOK').click( function() {
+		$('#divModalShare').modal('hide');
+		$.ajax({
+			url: "runner.jsp",
+			data: getMemoShareJsonDataParam(),
+			type: "POST",
+			dataType: "json"
+		}).done( function ( aData, aTextStatus, aJqXHR ) {
+			if (aData != null && aData.returnExists == "true" && aData.returnValue.done == true) {
+				$('#divShareSetting span').text(aData.returnValue.memoShareSetting);
+				useLimitKey = aData.returnValue.useLimitKey;
+				$('#divShowLimitKey').css('display', useLimitKey ? 'block' : 'none');
+			}
+		}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+		});
+	});
+
+	// ---------------------
+	// 秘密のURLボタン
+	// ---------------------
+	$('#btnShowLimitKey').click( function() {
+
+		$(this).prop("disabled", true);
+
+		$.ajax({
+			url: "runner.jsp",
+			data: { "json" : "getLimitKey"
+					, "event" : eventNumber
+					, "file" : fileIndex
+					, "runner" : runnerId },
+			type: "POST",
+			dataType: "json"
+		}).done( function ( aData, aTextStatus, aJqXHR ) {
+			var btnElement = $('#btnShowLimitKey');
+			btnElement.prop("disabled", false);
+			if (aData != null && aData.returnExists == "true") {
+				$('#txtSecretUrl').val(aData.returnValue.url);
+				$('#divModalLimitKey').modal();
+			}
+		}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+			var btnElement = $('#btnShowLimitKey');
+			btnElement.prop("disabled", false);
+		});
+
+	});
+
+    $("#txtSecretUrl").focus(function() {
+        $(this).select();
+    });
+
+	// ---------------------
+	// 関連URL登録ボタン
+	// ---------------------
+	$('#btnRegisterLink').click( function() {
+		$('#divModalPrivateUrl').modal();
+	});
+
+	// ---------------------
+	// 関連URL登録OK
+	// ---------------------
+	$('#btnModalPrivateUrlOK').click( function() {
+		$('#divModalPrivateUrl').modal('hide');
+		$.ajax({
+			url: "runner.jsp",
+			data: getPrivateLinkJsonDataParam(),
+			type: "POST",
+			dataType: "json"
+		}).done( function ( aData, aTextStatus, aJqXHR ) {
+			if (aData != null && aData.returnExists == "true" && aData.returnValue.done == true) {
+				if (aData.returnValue.url == "") {
+					$('#itmRelatedLink1').css('display', 'none');
+					$('#itmRelatedLink2').css('display', 'none');
+					$('#btnOpenRelatedLink').text(aData.returnValue.title).attr('href', aData.returnValue.url);
+					$('#btnRegisterLink').text("関連URL登録");
+				} else {
+					$('#itmRelatedLink1').css('display', 'block');
+					$('#itmRelatedLink2').css('display', 'block');
+					$('#btnOpenRelatedLink').text(aData.returnValue.title).attr('href', aData.returnValue.url);
+					$('#btnRegisterLink').text("関連URL変更");
+				}
+			}
+		}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+		});
+	});
+
+	// ---------------------
+	// 他人のメモ表示ボタン
+	// ---------------------
+	$("#btnShowOtherMemo").click( function () {
+		// 自分のメモの表示中であればオフにする
+		if ($("#btnShowMemo").hasClass("btn-primary")) { 
+			hideMyMemoView();
+		}
+		showOtherMemoView();
+	});
+	$("#btnHideOtherMemo").click( function () {
+		hideOtherMemoView();
+	});
+
+	// ---------------------
+	// 他人のメモ欄を変更
+	// ---------------------
+	$('#selOtherMemo').change( function() {
+		getOtherMemo();
+	});
+
+	// ---------------------
+	// 他人の関連URLボタン
+	// ---------------------
+	$('#btnShowOtherEventLink').click( function() {
+		$('#divModalOtherEventLink').modal();
+	});
+
+	// ---------------------
+	// 列内容変更
+	// ---------------------
+	$('#selRunner').change( function() {
+		clearSplitList(2);
+		getSplits($(this).val(), 2);
+	});
+
+	$('#selRunner').keydown( function() {
+		clearSplitList(2);
+		getSplits($(this).val(), 2);
+	});
+
+	// ---------------------
+	// 列追加
+	// ---------------------
+	$('#btnPlus').click( function() {
+		var headerCols = $('#tblList thead tr td');
+		var headerColCount = headerCols.length;
+		var newHeaderCol = $("<td></td>");
+		var newRunnerSel = $('#selRunner').clone(false);
+		var newRunnerSelId = 'selRunner' + headerColCount;
+		newRunnerSel.attr('id', newRunnerSelId);
+		newRunnerSel.change( function() {
+			clearSplitList(headerColCount - 1);
+			getSplits($(this).val(), headerColCount - 1);
+		});
+		newRunnerSel.keydown( function() {
+			clearSplitList(headerColCount - 1);
+			getSplits($(this).val(), headerColCount - 1);
+		});
+		newHeaderCol.append(newRunnerSel);
+		newHeaderCol.insertBefore(headerCols.eq(headerColCount - 1));
+
+		var tableRows = $('#tblList tbody tr');
+		for (var rowIndex = 0; rowIndex < tableRows.length; rowIndex++) {
+			var rowElement = tableRows.eq(rowIndex);
+			var bodyCols = rowElement.children("td");
+			// 本データ行
+			if (rowElement.hasClass("row-leg-body")) {
+				var newBodyCol = $("<td>&nbsp;</td>");
+				newBodyCol.insertBefore(bodyCols.eq(bodyCols.length - 1));
+				newBodyCol.css('display', 'table-cell');
+			}
+			// メタデータ行
+			else if (rowElement.hasClass("meta")) {
+				var newBodyCol = $("<td style=\"text-align: center;\">&nbsp;</td>");
+				newBodyCol.insertBefore(bodyCols.eq(bodyCols.length - 1));
+				newBodyCol.css('display', 'table-cell');
+			}
+			// メモ行・コメント行
+			else if (rowElement.hasClass("row-leg-memo") 
+					|| rowElement.hasClass("row-leg-memo-margin")
+					|| rowElement.hasClass("row-leg-comment")) {
+				bodyCols.eq(0).attr('colspan', Number( bodyCols.eq(0).attr('colspan') ) + 1);
+			}
+		}
+		$('.div-comment').css('width', String((headerColCount - 2) * 130 + 96) + "px");
+
+		getSplits($('#' + newRunnerSelId).val(), headerColCount - 1);
+
+	});
+
+	// メモ欄に値を入力した場合は、保存ボタンを着色する
+	$('.text-leg-memo').change( function() {
+		var btnElement = $(this).closest('tr').find('button');
+		if (btnElement.hasClass("btn-link")) {
+			btnElement.addClass("btn-warning").removeClass("btn-link");
+		}
+	});
+
+	// メモボタンクリック時の処理
+	$('.btn-leg-memo').click( function() {
+		var memoListKey = Number(this.id.substring(7));
+		// メモ編集モード→メモ保存
+		if ($("#btnEditMemo").hasClass("btn-primary")) {
+			saveLegMemo(memoListKey);
+		}
+		// 自分/他人のメモ表示モード→コメント欄表示ON/OFF切り替え
+		else if ($("#btnShowMemo").hasClass("btn-primary") || $('#divShowOtherMemo').css('display') == 'block') {
+			var tableCommentRows = $('.row-leg-comment-' + String(memoListKey));
+			var tableCommentRowLength = tableCommentRows.length;
+			var textTemplateRowElement = tableCommentRows.eq(tableCommentRowLength - 2);
+			var textAreaRowElement = tableCommentRows.eq(tableCommentRowLength - 1);
+
+			// コメント非表示→表示
+			if (textAreaRowElement.css('display') == "none") {
+				// 一度既存のコメント行を消去
+				for (var i = 0; i < tableCommentRowLength - 2; i ++) {
+					var rowIndex = tableCommentRowLength - 3 - i;
+					tableCommentRows.eq(rowIndex).remove();
+				}
+				// コメントデータからコメント行を生成
+				var memoItem = $("#btnShowMemo").hasClass("btn-primary") ? myMemoList[memoListKey] : otherMemoList[memoListKey];
+				if (memoItem.commentExists) {
+					for (var i = 0; i < memoItem.commentList.length; i++) {
+						var commentItem = memoItem.commentList[i];
+						if (commentItem.comment != "") {
+							addCommentRow(textTemplateRowElement, memoListKey, commentItem);
+						}
+					}
+				}
+				textAreaRowElement.css('display', 'table-row');
+			} 
+			// コメント表示→非表示
+			else {
+				for (var rowIndex = 0; rowIndex < tableCommentRowLength; rowIndex ++) {
+					if (rowIndex != tableCommentRowLength - 2) { // クローン用テンプレート行は除く
+						tableCommentRows.eq(rowIndex).css('display', 'none');
+					}
+				}
+			}
+
+		}
+	});
+
+	// メモコメントボタンの処理（コメントの追加）
+	$('.btn-leg-add-comment').click( function() {
+		var memoListKey = Number(this.id.substring(10));
+
+		var buttonId = "btnComment" + String(memoListKey);
+		var btnElement = $('#' + buttonId);
+		var txtElement = btnElement.closest('tr').find('textarea');
+		btnElement.prop("disabled", true);
+
+		$.ajax({
+			url: "runner.jsp",
+			data: { "json" : "addMemoComment"
+					, "event" : eventNumber
+					, "file" : fileIndex
+					, "runner" : runnerId
+					, "memoUser" : ($("#btnShowMemo").hasClass("btn-primary") ? myUserCode : $('#selOtherMemo').val())
+					, "leg" : memoListKey
+					, "value" : txtElement.val() },
+			type: "POST",
+			context: buttonId,
+			dataType: "json"
+		}).done( function ( aData, aTextStatus, aJqXHR ) {
+			var btnElement = $('#' + this);
+			btnElement.prop("disabled", false);
+			if (aData != null && aData.returnExists == "true" && aData.returnValue.done == true) {
+
+				// 入力済みの値は空にする
+				var txtElement = btnElement.closest('tr').find('textarea');
+				txtElement.val(""); 
+
+				// 変数に格納
+				var memoListKey = Number(this.substring(10));
+				var memoItem = $("#btnShowMemo").hasClass("btn-primary") ? myMemoList[memoListKey] : otherMemoList[memoListKey];
+				memoItem.commentExists = true;
+				var commentItem = new Object();
+				commentItem.index = aData.returnValue.index;
+				commentItem.userCode = myUserCode;
+				commentItem.userName = myUserName;
+				commentItem.comment = aData.returnValue.value;
+				memoItem.commentList.push(commentItem);
+			
+				// コメント行を追加
+				var tableCommentRows = $('.row-leg-comment-' + String(memoListKey));
+				addCommentRow(tableCommentRows.eq(tableCommentRows.length - 2), memoListKey, commentItem);
+
+				// アイコンを変更
+				var btnLegMemoSaveElement = $("#btnMemo" + String(memoListKey));
+				if (btnLegMemoSaveElement.hasClass("btn-comment-on") == false) {
+					btnLegMemoSaveElement.addClass("btn-comment-on").removeClass("btn-comment-off");
+				}
+
+			}
+		
+		}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+			var btnElement = $('#' + this);
+			btnElement.prop("disabled", false);
+		});
+	
+	});
+
+	// コメント編集ボタン
+	$('#btnModalEditCommentOK').click( function() {
+		var textElement = $('#txtEditComment');
+		var comment = textElement.val();
+		var memoListKey = Number(textElement.attr('data-lc-memo-list-key'));
+		var commentIndex = Number(textElement.attr('data-lc-comment-index'));
+		var deleteFlag = $('#chkDeleteComment').prop("checked");
+		if (deleteFlag == true) {
+			comment = "";
+		}
+		var btnElement = $('#btnModalEditCommentOK');
+		btnElement.prop("disabled", true);
+
+		$.ajax({
+			url: "runner.jsp",
+			data: { "json" : "editMemoComment"
+					, "event" : eventNumber
+					, "file" : fileIndex
+					, "runner" : runnerId
+					, "memoUser" : ($("#btnShowMemo").hasClass("btn-primary") ? myUserCode : $('#selOtherMemo').val())
+					, "leg" : memoListKey
+					, "commentIndex" : commentIndex
+					, "value" : comment },
+			type: "POST",
+			dataType: "json"
+		}).done( function ( aData, aTextStatus, aJqXHR ) {
+			var btnElement = $('#btnModalEditCommentOK');
+			btnElement.prop("disabled", false);
+			if (aData != null && aData.returnExists == "true" && aData.returnValue.done == true) {
+				var textElement = $('#txtEditComment');
+				var memoListKey = Number(textElement.attr('data-lc-memo-list-key'));
+				var commentIndex = Number(textElement.attr('data-lc-comment-index'));
+
+				var memoItem = $("#btnShowMemo").hasClass("btn-primary") ? myMemoList[memoListKey] : otherMemoList[memoListKey];
+				var commentItem = null;
+				for (var i = 0; i < memoItem.commentList.length; i++) {
+					if (memoItem.commentList[i].index == commentIndex) {
+						commentItem = memoItem.commentList[i];
+						break;
+					}
+				}
+				if (commentItem != null) {
+					commentItem.comment = aData.returnValue.value;
+				}
+				var btnEditElement = $('#btnCommentEdit' + String(memoListKey) + "_" + String(commentIndex));
+				var rowElement = btnEditElement.closest('tr');
+				
+				if (aData.returnValue.value == "") {
+					rowElement.remove();
+				} else {
+					var cellElement = rowElement.children('td').eq(0);
+					cellElement.find('span').eq(0).text(commentItem.userName);
+					cellElement.find('span').eq(1).text(commentItem.comment);
+				}
+
+				$('#divModalEditComment').modal('hide');
+			}
+		
+		}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+			var btnElement = $('#btnModalEditCommentOK');
+			btnElement.prop("disabled", false);
+		});
+
+		
+	});
+
+	// -----------------------------------------------------
+
+	getSplits($('#selRunner').val(), 2);
+	
+	if (defaultOtherMemoUserCode != "") {
+		// 他人のメモ表示ON
+		showOtherMemoView();
+	} else if (privateMemoExists) {
+		// メモ表示ON
+		showMyMemoView();
+	}
+});
+
+
+function getSplits(aRunnerId, aColIndex) {
+	var callBackParam = { "colIndex" : aColIndex };
+	$.ajax({
+		url: "runner.jsp",
+		data: { "json" : "splits"
+				, "event" : eventNumber
+				, "file" : fileIndex
+				, "type" : analysysType
+				, "class" : classId
+				, "runner" : aRunnerId },
+		type: "POST",
+		context: callBackParam,
+		dataType: "json"
+	}).done( function ( aData, aTextStatus, aJqXHR ) {
+		if (aData != null && aData.returnExists == "true") {
+			refreshSplitList(aData.returnValue, this.colIndex);
+		}
+	}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+	});
+}
+
+// Ajax取得前に表示をクリアする
+function clearSplitList(aColIndex) {
+	var tableRows = $('#tblList tbody tr');
+	for (var rowIndex = 0; rowIndex < tableRows.length; rowIndex++) {
+		var rowElement = tableRows.eq(rowIndex);
+		var bodyCols = rowElement.children("td");
+		// 本データ行
+		if (rowElement.hasClass("row-leg-body")) {
+			var cellElement = bodyCols.eq(aColIndex);
+			var cellText = "<div class=\"split-row-1\">" 
+						+ "<div class=\"split-cell-laptime\">&nbsp;</div>"
+						+ "<div class=\"split-cell-laprank\">&nbsp;</div>"
+						+ "<div class=\"split-cell-speed\">&nbsp;</div>"
+					+ "</div>"
+					+ "<div class=\"split-row-2\">"
+						+ "<div class=\"split-cell-elapsedtime\">&nbsp;</div>"
+						+ "<div class=\"split-cell-elapsedrank\">&nbsp;</div>"
+						+ "<div class=\"split-cell-loss\">&nbsp;</div>"
+					+ "</div>";
+			cellElement.html(cellText);
+		}
+		// メタデータ行
+		else if (rowElement.hasClass("meta")) {
+			var metaCellElement = bodyCols.eq(aColIndex - 1);
+			metaCellElement.html("&nbsp;");
+		}
+	}
+}
+
+// Ajaxで取得した内容を画面に表示する
+function refreshSplitList(aData, aColIndex) {
+
+	var tableRows = $('#tblList tbody tr');
+	var legIndex = 0;
+	var metaIndex = 0;
+	for (var rowIndex = 0; rowIndex < tableRows.length; rowIndex++) {
+		var rowElement = tableRows.eq(rowIndex);
+		var bodyCols = rowElement.children("td");
+		// 本データ行
+		if (rowElement.hasClass("row-leg-body")) {
+			var legData = aData.legList[legIndex];
+			var cellElement = bodyCols.eq(aColIndex);
+		
+			var rowStyle1 = "";
+			if (legData.lapRank == "1") {
+				rowStyle1 = "style=\"background-color: #ffcccc\"";
+			}
+			else if (legData.lapRank == "2") {
+				rowStyle1 = "style=\"background-color: #ffdddd\"";
+			}
+			else if (legData.lapRank == "3") {
+				rowStyle1 = "style=\"background-color: #ffeeee\"";
+			}
+			var rowStyle2 = "";
+		
+			var cellText = "<div class=\"split-row-1\" " + rowStyle1 + ">" 
+						+ "<div class=\"split-cell-laptime\">" + legData.lapTime + "</div>"
+						+ "<div class=\"split-cell-laprank\">" + legData.lapRank + "</div>"
+						+ "<div class=\"split-cell-speed\">" + legData.speed + "</div>"
+					+ "</div>"
+					+ "<div class=\"split-row-2\" " + rowStyle2 + ">"
+						+ "<div class=\"split-cell-elapsedtime\">" + legData.elapsedTime + "</div>"
+						+ "<div class=\"split-cell-elapsedrank\">" + legData.elapsedRank + "</div>"
+						+ "<div class=\"split-cell-loss\">" + legData.lossTime + "</div>"
+					+ "</div>";
+		
+			cellElement.html(cellText);
+			legIndex ++;
+		}
+		// メタデータ行
+		else if (rowElement.hasClass("meta")) {
+			var metaCellElement = bodyCols.eq(aColIndex - 1);
+			switch (metaIndex) {
+			case 0:
+				metaCellElement.html(aData.runnerName);
+				break;
+			case 1:
+				metaCellElement.html(aData.result);
+				break;
+			case 2:
+				metaCellElement.html(aData.speed);
+				break;
+			case 3:
+				metaCellElement.html(aData.lossRate);
+				break;
+			}
+			metaIndex ++;
+		}
+	}
+
+}
+
+var savingPrivateMemo = false;
+
+/**
+ * メモ入力モードを終了する
+ */
+function hideMyMemoEdit() {
+	console.log("hideMyMemoEdit");
+	var btnElement = $("#btnEditMemo");
+	if (savingPrivateMemo == false) {
+		// 未保存のデータは保存する
+		for (var i = 0; i < memoListKeyList.length; i++) {
+			var memoListKey = memoListKeyList[i];
+			var btnLegMemoSaveElement = $("#btnMemo" + String(memoListKey));
+			if (btnLegMemoSaveElement.hasClass("btn-warning")) {
+				saveLegMemo(memoListKey);
+				savingPrivateMemo = true;
+			}
+		}
+		if (savingPrivateMemo) {
+			var messageElement = $("#divOperationMessage");
+			messageElement.text("メモ登録中・・・");
+			messageElement.css("display", "block");
+			btnElement.prop("disabled", true);
+		}
+	}
+	else {
+		// 保存が終わったか点検
+		savingPrivateMemo = false;
+		for (var i = 0; i < memoListKeyList.length; i++) {
+			var memoListKey = memoListKeyList[i];
+			var btnLegMemoSaveElement = $("#btnMemo" + String(memoListKey));
+			if (btnLegMemoSaveElement.hasClass("btn-warning")) {
+				savingPrivateMemo = true;
+				break;
+			}
+		}
+		if (savingPrivateMemo == false) {
+			btnElement.prop("disabled", false);
+			$('#divOperationMessage').css('display', 'none');	// 操作後のメッセージは非表示にする
+		}
+	}
+	if (savingPrivateMemo == true) {
+		// 保存完了を待つ
+		setTimeout(function() {
+			hideMyMemoEdit();
+		}, 500);
+		return;
+	}
+
+	btnElement.addClass("btn-default").removeClass("btn-primary");
+	$('.row-leg-memo').css('display', 'none');			// メモ表示行
+	$('.row-leg-memo-margin').css('display', 'none');			// メモ表示行
+	$('.block-show-memo-view').css('display', 'none');	// メモ表示中に表示する部分
+	$('#divShareSetting').css('display', 'none');		// 公開範囲
+	$('.btn-leg-memo').css('visibility', 'hidden');		// メモ登録用ボタンはメモ入力・表示中のみ表示
+	$('.inline-hide-in-memo').css('display', 'inline-block');	// メモ入力中に非表示にするinlineレベル群
+	$('.inline-show-in-memo').css('display', 'none');	// メモ入力中に表示するinlineレベル群
+	$('.block-hide-in-memo').css('display', 'block');	// メモ入力中に非表示にするblockレベル群
+	$('.block-show-in-memo').css('display', 'none');	// メモ入力中に表示するblockレベル群
+	$('.btn-leg-name').removeClass('disabled');			// レッグボタンは有効に
+
+	// メモ表示モードへ
+	showMyMemoView();
+}
+
+
+/**
+ * メモを保存する
+ */
+function saveLegMemo(aLegIndex) {
+	var buttonId = "btnMemo" + String(aLegIndex);
+	var btnElement = $('#' + buttonId);
+	var txtElement = btnElement.closest('tr').find('textarea');
+	btnElement.prop("disabled", true);
+
+	$.ajax({
+		url: "runner.jsp",
+		data: { "json" : "privateMemo"
+				, "event" : eventNumber
+				, "file" : fileIndex
+				, "runner" : runnerId
+				, "leg" : aLegIndex
+				, "value" : txtElement.val() },
+		type: "POST",
+		context: buttonId,
+		dataType: "json"
+	}).done( function ( aData, aTextStatus, aJqXHR ) {
+		var btnElement = $('#' + this);
+		btnElement.prop("disabled", false);
+	
+		if (aData != null && aData.returnExists == "true" && aData.returnValue.done == true) {
+			// 変数に格納
+			var memoListKey = Number(this.substring(7));
+			var memoItem = myMemoList[memoListKey];
+			memoItem.memoExists = (aData.returnValue.value != "");
+			memoItem.memo = aData.returnValue.value;
+
+			// アイコンの色を戻す
+			if (btnElement.hasClass("btn-warning")) {
+				btnElement.addClass("btn-link").removeClass("btn-warning");
+			}
+		}
+	
+	}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+		var btnElement = $('#' + this);
+		btnElement.prop("disabled", false);
+	});
+}
+
+/**
+ * メモを表示する
+ */
+function showMyMemoView() {
+	var btnElement = $("#btnShowMemo");
+	if (btnElement.hasClass("btn-default")) { 
+		btnElement.addClass("btn-primary").removeClass("btn-default");
+	}
+	$('.row-leg-memo').css('display', 'table-row');
+	$('.row-leg-memo-margin').css('display', 'table-row');
+	$('.btn-leg-memo').css('visibility', 'visible');	// メモ登録用ボタンはメモ入力・表示中のみ表示
+	$('.block-show-memo-view').css('display', 'block');
+	$('#divShareSetting').css('display', 'block');		// 公開範囲
+	$('.row-leg-comment').css('display', 'none');		// コメント行は初期は非表示
+
+	for (var i = 0; i < memoListKeyList.length; i++) {
+		var memoListKey = memoListKeyList[i];
+		// レッグメモ保存ボタンをコメントマークにする
+		var spanLegMemoSaveElement = $("#btnMemo" + String(memoListKey) + " span");
+		if (spanLegMemoSaveElement.hasClass("glyphicon-ok")) { 
+			spanLegMemoSaveElement.addClass("glyphicon-comment").removeClass("glyphicon-ok");
+		}
+		
+		// メモをセットする
+		var memoItem = myMemoList[memoListKey];
+		var txtMemoElement = $("#txtMemo" + String(memoListKey));
+		if (memoItem.memoExists) {
+			txtMemoElement.val(memoItem.memo);
+		} else {
+			txtMemoElement.val("");
+		}
+		txtMemoElement.attr('readonly', true);
+		
+		// コメントがある場合は着色
+		var btnLegMemoSaveElement = $("#btnMemo" + String(memoListKey));
+		if (memoItem.commentExists == true) {
+			if (btnLegMemoSaveElement.hasClass("btn-comment-on") == false) {
+				btnLegMemoSaveElement.addClass("btn-comment-on");
+			}
+			if (btnLegMemoSaveElement.hasClass("btn-comment-off")) {
+				btnLegMemoSaveElement.removeClass("btn-comment-off");
+			}
+		}
+		else {
+			if (btnLegMemoSaveElement.hasClass("btn-comment-off") == false) {
+				btnLegMemoSaveElement.addClass("btn-comment-off");
+			}
+			if (btnLegMemoSaveElement.hasClass("btn-comment-on")) {
+				btnLegMemoSaveElement.removeClass("btn-comment-on");
+			}
+		}
+	}
+}
+
+/**
+ * メモを表示する
+ */
+function showOtherMemoView() {
+	$('.block-hide-in-other-memo').css('display', 'none');
+	$('#divShowOtherMemo').css('display', 'block');
+	getOtherMemo();
+}
+
+/**
+ * メモを非表示にする
+ */
+function hideMyMemoView() {
+	// コメントアイコンを元に戻す
+	for (var i = 0; i < memoListKeyList.length; i++) {
+		var memoListKey = memoListKeyList[i];
+		var btnLegMemoSaveElement = $("#btnMemo" + String(memoListKey));
+		if (btnLegMemoSaveElement.hasClass("btn-comment-on")) {
+			btnLegMemoSaveElement.removeClass("btn-comment-on");
+		}
+		if (btnLegMemoSaveElement.hasClass("btn-comment-off")) {
+			btnLegMemoSaveElement.removeClass("btn-comment-off");
+		}
+	}
+
+	var btnElement = $("#btnShowMemo");
+	if (btnElement.hasClass("btn-primary")) { 
+		btnElement.addClass("btn-default").removeClass("btn-primary");
+	}
+	$('.row-leg-memo').css('display', 'none');
+	$('.row-leg-memo-margin').css('display', 'none');
+	$('.row-leg-comment').css('display', 'none');		// コメント行も非表示
+	$('.btn-leg-memo').css('visibility', 'hidden');		// メモ登録用ボタンはメモ入力・表示中のみ表示
+	$('.block-show-memo-view').css('display', 'none');
+	$('#divShareSetting').css('display', 'none');		// 公開範囲
+}
+
+/**
+ * メモを非表示にする
+ */
+function hideOtherMemoView() {
+	// コメントアイコンを元に戻す
+	for (var i = 0; i < memoListKeyList.length; i++) {
+		var memoListKey = memoListKeyList[i];
+		var btnLegMemoSaveElement = $("#btnMemo" + String(memoListKey));
+		if (btnLegMemoSaveElement.hasClass("btn-comment-on")) {
+			btnLegMemoSaveElement.removeClass("btn-comment-on");
+		}
+		if (btnLegMemoSaveElement.hasClass("btn-comment-off")) {
+			btnLegMemoSaveElement.removeClass("btn-comment-off");
+		}
+	}
+
+	$('.row-leg-memo').css('display', 'none');
+	$('.row-leg-memo-margin').css('display', 'none');
+	$('.row-leg-comment').css('display', 'none');		// コメント行も非表示
+	$('.btn-leg-memo').css('visibility', 'hidden');		// メモ登録用ボタンはメモ入力・表示中のみ表示
+	$('.block-show-memo-view').css('display', 'none');
+	$('.block-hide-in-other-memo').css('display', 'block');
+	$('#divShowOtherMemo').css('display', 'none');
+}
+
+/**
+ * 他の人のメモを取得する
+ */
+function getOtherMemo() {
+	$.ajax({
+		url: "runner.jsp",
+		data: { "json" : "otherMemo"
+				, "event" : eventNumber
+				, "file" : fileIndex
+				, "runner" : runnerId
+				, "memoUser" : $('#selOtherMemo').val() },
+		type: "POST",
+		dataType: "json"
+	}).done( function ( aData, aTextStatus, aJqXHR ) {
+		if (aData != null && aData.returnExists == "true") {
+			$('.row-leg-memo').css('display', 'table-row');
+			$('.row-leg-memo-margin').css('display', 'table-row');
+			$('.btn-leg-memo').css('visibility', 'visible');	// メモ登録用ボタンはメモ入力・表示中のみ表示
+			$('.block-show-memo-view').css('display', 'block');
+			$('.row-leg-comment').css('display', 'none');		// コメント行は初期は非表示
+
+			// 戻り値をotherMemoListに格納
+			var retMemoList = aData.returnValue.memoList;
+			otherMemoList = {};
+			for (var i = 0; i < memoListKeyList.length; i++) {
+				var memoListKey = memoListKeyList[i];
+				var retItem = retMemoList[memoListKey];
+				var memoItem = new Object();
+				memoItem.memoExists = retItem["memoExists"];
+				memoItem.memo = retItem["memo"];
+				var commentList = [];
+				memoItem.commentExists = retItem["commentExists"];
+				if (memoItem.commentExists == true) {
+					var retCommentList = retItem["commentList"];
+					for (var j = 0; j < retCommentList.length; j++) {
+						var retCommentItem = retCommentList[j];
+						var commentItem = new Object();
+						commentItem.index = retCommentItem["index"];
+						commentItem.userCode = retCommentItem["userCode"];
+						commentItem.userName = retCommentItem["userName"];
+						commentItem.comment = retCommentItem["comment"];
+						commentList.push(commentItem);
+					}
+					
+				}
+				memoItem.commentList = commentList;
+				otherMemoList[memoListKey] = memoItem;
+			}
+
+			for (var i = 0; i < memoListKeyList.length; i++) {
+				var memoListKey = memoListKeyList[i];
+				// レッグメモ保存ボタンをコメントマークにする
+				var spanLegMemoSaveElement = $("#btnMemo" + String(memoListKey) + " span");
+				if (spanLegMemoSaveElement.hasClass("glyphicon-ok")) { 
+					spanLegMemoSaveElement.addClass("glyphicon-comment").removeClass("glyphicon-ok");
+				}
+
+				// メモをセットする
+				var memoItem = otherMemoList[memoListKey];
+				var txtMemoElement = $("#txtMemo" + String(memoListKey));
+				if (memoItem.memoExists) {
+					txtMemoElement.val(memoItem.memo);
+				} else {
+					txtMemoElement.val("");
+				}
+				txtMemoElement.attr('readonly', true);
+		
+				// コメントがある場合は着色
+				var btnLegMemoSaveElement = $("#btnMemo" + String(memoListKey));
+				if (memoItem.commentExists == true) {
+					if (btnLegMemoSaveElement.hasClass("btn-comment-on") == false) {
+						btnLegMemoSaveElement.addClass("btn-comment-on");
+					}
+					if (btnLegMemoSaveElement.hasClass("btn-comment-off")) {
+						btnLegMemoSaveElement.removeClass("btn-comment-off");
+					}
+				}
+				else {
+					if (btnLegMemoSaveElement.hasClass("btn-comment-off") == false) {
+						btnLegMemoSaveElement.addClass("btn-comment-off");
+					}
+					if (btnLegMemoSaveElement.hasClass("btn-comment-on")) {
+						btnLegMemoSaveElement.removeClass("btn-comment-on");
+					}
+				}
+			}
+
+		}
+	}).fail( function ( aJqXHR, aTextStatus, aErrorThrown ) {
+	});
+}
+
+/**
+ * コメント行を追加
+ */
+function addCommentRow(aTemplateRowElement, aMemoListKey, aCommentItem) {
+
+	var newCommentRow = aTemplateRowElement.clone(false);
+	var commentEditButton = newCommentRow.children('td').eq(1).children('button').eq(0);
+	commentEditButton.attr('id', 'btnCommentEdit' + String(aMemoListKey) + "_" + String(aCommentItem.index));
+
+	if (aCommentItem.userCode == myUserCode) {
+
+		commentEditButton.css('visibility', 'visible');
+		commentEditButton.click( function() {
+			var commentKey = this.id.substring(14);
+			var sepPos = commentKey.indexOf("_");
+			var memoListKey = Number( commentKey.substring(0, sepPos) );
+			var commentIndex = Number( commentKey.substring(sepPos + 1) );
+			var memoItem = $("#btnShowMemo").hasClass("btn-primary") ? myMemoList[memoListKey] : otherMemoList[memoListKey];
+			var commentItem = null;
+			for (var i = 0; i < memoItem.commentList.length; i++) {
+				if (memoItem.commentList[i].index == commentIndex) {
+					commentItem = memoItem.commentList[i];
+					break;
+				}
+			}
+			if (commentItem != null) {
+				$('#txtEditComment').val(commentItem.comment).attr('data-lc-memo-list-key', memoListKey).attr('data-lc-comment-index', commentIndex);
+				$('#chkDeleteComment').prop("checked", false);
+				$('#divModalEditComment').modal();
+			}
+		});
+	}
+
+	var cellElement = newCommentRow.children('td').eq(0);
+	cellElement.find('span').eq(0).text(aCommentItem.userName);
+	cellElement.find('span').eq(1).text(aCommentItem.comment);
+
+	newCommentRow.css('display', 'table-row');
+	newCommentRow.insertBefore(aTemplateRowElement);
+
+}

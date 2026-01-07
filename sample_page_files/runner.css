@@ -1,0 +1,98 @@
+div.split-row-1 {
+	display: table-row;
+	height: 14px;
+}
+div.split-row-2 {
+	display: table-row;
+	height: 14px;
+}
+div.split-cell-laptime {
+	display: table-cell;
+	text-align: right;
+	width: 60px;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 0px 2px 0px 2px;
+}
+div.split-cell-laprank {
+	display: table-cell;
+	text-align: right;
+	width: 30px;
+	padding: 0px 2px 0px 2px;
+}
+div.split-cell-elapsedtime {
+	display: table-cell;
+	text-align: right;
+	width: 60px;
+	padding: 0px 2px 0px 2px;
+	font-style: oblique;
+	color: #77a;
+}
+div.split-cell-elapsedrank {
+	display: table-cell;
+	text-align: right;
+	width: 30px;
+	padding: 0px 2px 0px 2px;
+	font-style: oblique;
+	color: #77a;
+}
+
+div.split-cell-speed {
+	display: table-cell;
+	text-align: right;
+	width: 40px;
+	padding: 0px 2px 0px 2px;
+	color: #777;
+}
+div.split-cell-loss {
+	display: table-cell;
+	text-align: right;
+	width: 40px;
+	padding: 0px 2px 0px 2px;
+	color: #777;
+}
+
+td {
+	border: 1px solid #ccc;
+}
+td.cell-comment {
+	font-size: 90%;
+	color: #777;
+}
+tr.meta {
+	background-color: #eee;
+}
+textarea.text-leg-comment { 
+	background: #fff;
+}
+[readonly].text-leg-memo { 
+	background: #f8f8f8;
+	padding: 4px;
+	border: none;
+}
+button.btn-comment-on {
+	color: #0ca;
+}
+button.btn-comment-on:hover {
+	color: #0a8;
+}
+button.btn-comment-on:focus {
+	color: #0a8;
+}
+button.btn-comment-off {
+	color: #aaa;
+}
+button.btn-comment-off:hover {
+	color: #888;
+}
+button.btn-comment-off:focus {
+	color: #888;
+}
+span.comment-body {
+	white-space: pre-line;
+	word-break: break-all;
+	word-wrap: break-word;
+}
+div.div-comment {
+	width: 254px;
+}

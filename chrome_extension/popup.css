@@ -1,0 +1,144 @@
+:root {
+  --bg: #f3f1eb;
+  --card: #ffffff;
+  --accent: #0e7a66;
+  --accent-strong: #075449;
+  --text: #1d2b2a;
+  --muted: #5c6a69;
+  --danger: #b04439;
+  --shadow: 0 12px 30px rgba(19, 35, 33, 0.12);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--text);
+  background: radial-gradient(circle at top right, #fef6dc, var(--bg) 55%);
+  font-family: "Yu Gothic UI", "Meiryo", "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", sans-serif;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(140deg, #0e7a66, #1fa57a);
+  color: #ffffff;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow);
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+p {
+  margin: 4px 0 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(15, 40, 36, 0.08);
+  display: grid;
+  gap: 10px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+.status,
+.output {
+  font-size: 12px;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.status.ok {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.status.bad {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.primary {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--accent), #2ebf88);
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(12, 79, 69, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(12, 79, 69, 0.25);
+}
+
+.primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.message {
+  min-height: 18px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.message.ok {
+  color: var(--accent);
+}
+
+.message.bad {
+  color: var(--danger);
+}
