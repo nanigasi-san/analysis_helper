@@ -95,7 +95,7 @@
     const button = document.createElement("button");
     button.type = "button";
     button.className = "btn btn-success analysis-helper-btn";
-    button.textContent = "分析";
+    button.textContent = "アナリシス生成";
 
     const status = document.createElement("span");
     status.className = "analysis-helper-status";
@@ -205,18 +205,6 @@
     lines.push(`+ 順位: ${data.result.totalRank || ""}`);
     lines.push(`+ 巡航速度: ${data.result.speed || ""}`);
     lines.push(`+ ミス率: ${data.result.missRate || ""}`);
-    if (data.eventId) {
-      lines.push(`+ イベントID: ${data.eventId}`);
-    }
-    if (data.fileId) {
-      lines.push(`+ ファイルID: ${data.fileId}`);
-    }
-    if (data.classId) {
-      lines.push(`+ クラスID: ${data.classId}`);
-    }
-    if (data.runnerId) {
-      lines.push(`+ ランナーID: ${data.runnerId}`);
-    }
     lines.push("---");
     lines.push("");
     lines.push("## 出走前");

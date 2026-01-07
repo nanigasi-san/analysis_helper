@@ -57,7 +57,7 @@ async function handleAnalyze() {
 
 function setLoading(isLoading) {
   analyzeButton.disabled = isLoading;
-  analyzeButton.textContent = isLoading ? "生成中..." : "分析";
+  analyzeButton.textContent = isLoading ? "生成中..." : "アナリシス生成";
 }
 
 function showMessage(text, tone) {

@@ -7,12 +7,21 @@
     "default_title": "Analysis Helper",
     "default_popup": "popup.html"
   },
-  "permissions": ["activeTab", "downloads", "scripting"],
-  "host_permissions": ["https://mulka2.com/lapcenter/*"],
+  "permissions": [
+    "activeTab",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://mulka2.com/lapcenter/lapcombat2/runner.jsp*"
+  ],
   "content_scripts": [
     {
-      "matches": ["https://mulka2.com/lapcenter/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://mulka2.com/lapcenter/lapcombat2/runner.jsp*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ],
