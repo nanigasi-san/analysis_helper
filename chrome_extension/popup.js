@@ -160,6 +160,17 @@ function sanitizeFileName(value) {
     .replace(/^_+|_+$/g, "");
 }
 
+function formatMiss(value) {
+  const trimmed = (value || "").trim();
+  if (!trimmed) {
+    return "";
+  }
+  if (trimmed.startsWith("-") || trimmed.startsWith("+")) {
+    return trimmed;
+  }
+  return `+${trimmed}`;
+}
+
 function buildMarkdown(data) {
   const lines = [];
   const raceTitle = data.raceTitle || "レース名 - コース";
@@ -178,10 +189,13 @@ function buildMarkdown(data) {
 
   data.legs.forEach((leg, index) => {
     const legName = leg.name || `レッグ${index + 1}`;
-    const miss = leg.loss ? `miss: ${leg.loss}` : "miss:";
-    const lapRank = leg.lapRank ? `区間${leg.lapRank}位` : "区間位";
-    const totalRank = leg.totalRank ? `総合${leg.totalRank}位` : "総合位";
-    lines.push(`## ${legName} (${miss}, ${lapRank}) - ${totalRank}`);
+    const time = leg.time || "";
+    const miss = formatMiss(leg.loss);
+    const lapRank = leg.lapRank || "";
+    const totalRank = leg.totalRank || "";
+    lines.push(
+      `## ${legName} ${time}(${miss}) - 区間${lapRank}位, 総合${totalRank}位`
+    );
     lines.push("#### [Plan]");
     lines.push("#### [Do]");
     lines.push("#### [Analysis]");

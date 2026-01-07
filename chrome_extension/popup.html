@@ -1,35 +1,38 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Analysis Helper</title>
-    <link rel="stylesheet" href="popup.css" />
-  </head>
-  <body>
-    <main class="app">
-      <header class="app-header">
-        <div class="logo" aria-hidden="true">AH</div>
-        <div>
-          <h1>Analysis Helper</h1>
-          <p>LapCenterの記録ページからMarkdownテンプレートを生成します。</p>
-        </div>
-      </header>
 
-      <section class="panel">
-        <div class="field">
-          <span class="field-label">対象ページ</span>
-          <div id="pageStatus" class="status">読み込み中...</div>
-        </div>
-        <div class="field">
-          <span class="field-label">出力形式</span>
-          <div class="output">Markdown (.md)</div>
-        </div>
-      </section>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Analysis Helper</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
 
-      <button id="analyzeButton" class="primary" type="button">分析</button>
-      <div id="message" class="message" role="status" aria-live="polite"></div>
-    </main>
-    <script src="popup.js"></script>
-  </body>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <div class="logo" aria-hidden="true">AH</div>
+      <div>
+        <h1>Analysis Helper</h1>
+        <p>LapCenterの記録ページからMarkdownテンプレートを生成します。</p>
+      </div>
+    </header>
+
+    <section class="panel">
+      <div class="field">
+        <span class="field-label">対象ページ</span>
+        <div id="pageStatus" class="status">読み込み中...</div>
+      </div>
+      <div class="field">
+        <span class="field-label">出力形式</span>
+        <div class="output">Markdown (.md)</div>
+      </div>
+    </section>
+
+    <button id="analyzeButton" class="primary" type="button">分析</button>
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+
 </html>
