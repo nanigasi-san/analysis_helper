@@ -94,13 +94,20 @@
 
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "btn btn-success analysis-helper-btn";
+    button.className = "analysis-helper-btn";
     button.textContent = "アナリシス生成";
+
+    const editLink = document.createElement("a");
+    editLink.className = "analysis-helper-link";
+    editLink.href = "https://simpliconvert.com/markdown_editor/";
+    editLink.target = "_blank";
+    editLink.rel = "noreferrer";
+    editLink.textContent = "ファイルを編集(外部サイト)";
 
     const status = document.createElement("span");
     status.className = "analysis-helper-status";
 
-    container.append(button, status);
+    container.append(button, editLink, status);
     anchor.insertAdjacentElement("afterend", container);
 
     button.addEventListener("click", () => {
@@ -137,12 +144,55 @@
         margin: 6px 0 12px 0;
       }
       .analysis-helper-btn {
-        min-width: 88px;
+        min-width: 120px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ff9d5c;
+        font-size: 12px;
         font-weight: 700;
+        color: #f06d12;
+        background: #ffd4b3;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(240, 109, 18, 0.15);
+        transition: all 0.2s ease;
+      }
+      .analysis-helper-btn:hover {
+        background: #ffc299;
+        border-color: #ff8a3d;
+        color: #c85a0e;
+        box-shadow: 0 6px 16px rgba(240, 109, 18, 0.22);
+        transform: translateY(-1px);
+      }
+      .analysis-helper-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(240, 109, 18, 0.18);
       }
       .analysis-helper-status {
         font-size: 12px;
         color: #1d2b2a;
+      }
+      .analysis-helper-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ffb380;
+        background: #ffe8d6;
+        font-size: 12px;
+        font-weight: 700;
+        color: #f06d12;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      .analysis-helper-link:hover {
+        background: #ffd4b3;
+        border-color: #ff9d5c;
+        color: #c85a0e;
+        transform: translateY(-1px);
+      }
+      .analysis-helper-link:active {
+        transform: translateY(0);
       }
     `;
     document.head.append(style);
@@ -216,7 +266,7 @@
       const lapRank = leg.lapRank || "";
       const totalRank = leg.totalRank || "";
       lines.push(
-        `## ${legName} ${time}(${miss}) - 区間${lapRank}位, 総合${totalRank}位`
+        `## [${legName}] ${time}(${miss}) - 区間${lapRank}位, 総合${totalRank}位`
       );
       lines.push("#### [Plan]");
       lines.push("#### [Do]");

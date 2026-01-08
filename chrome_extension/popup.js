@@ -194,7 +194,7 @@ function buildMarkdown(data) {
     const lapRank = leg.lapRank || "";
     const totalRank = leg.totalRank || "";
     lines.push(
-      `## ${legName} ${time}(${miss}) - 区間${lapRank}位, 総合${totalRank}位`
+      `## [${legName}] ${time}(${miss}) - 区間${lapRank}位, 総合${totalRank}位`
     );
     lines.push("#### [Plan]");
     lines.push("#### [Do]");

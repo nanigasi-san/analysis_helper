@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Analysis Helper",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "LapCenterの記録ページからアナリシス用Markdownテンプレートを生成します。",
   "action": {
     "default_title": "Analysis Helper",

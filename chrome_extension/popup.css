@@ -108,7 +108,7 @@ p {
   font-size: 14px;
   font-weight: 700;
   color: #ffffff;
-  background: linear-gradient(135deg, var(--accent), #2ebf88);
+  background: #0e7a66;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(12, 79, 69, 0.2);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -127,6 +127,34 @@ p {
 
 .is-hidden {
   display: none;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  color: #0e7a66;
+  background: #e7f4f1;
+  border: 1px solid #b6e0d6;
+  white-space: normal;
+}
+
+.secondary:hover {
+  color: #0a5c4e;
+  background: #d7ede8;
+  border-color: #8fd0c3;
 }
 
 .message {
